@@ -1,0 +1,26 @@
+.firebase/
+.firebaserc
+*.log
+.DS_Store
+Thumbs.db
+node_modules/
+www/
+dist/
+.angular/
+.ionic/
+coverage/
+*.keystore
+*.jks
+google-services.json
+GoogleService-Info.plist
+
+# Android build outputs only (keep android project files)
+app/android/app/build/
+app/android/.gradle/
+app/android/build/
+app/ios/
+
+# Server
+SERVER/node_modules/
+.env
+.env.local

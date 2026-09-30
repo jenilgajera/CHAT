@@ -1,0 +1,17 @@
+{
+  "name": "Friends Chat",
+  "short_name": "Friends",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#efeae2",
+  "theme_color": "#008069",
+  "description": "Private WhatsApp-style messenger for a small friends group.",
+  "icons": [
+    {
+      "src": "assets/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

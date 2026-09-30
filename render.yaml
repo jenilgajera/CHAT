@@ -1,0 +1,20 @@
+services:
+  - type: web
+    name: friends-chat-api
+    runtime: node
+    rootDir: server
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: CLIENT_ORIGIN
+        sync: false
+      - key: ENABLE_PUSH
+        value: "false"
+      - key: INVITE_CODE
+        value: FRIENDS

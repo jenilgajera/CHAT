@@ -26,13 +26,10 @@ const chatSchema = new mongoose.Schema(
     members: { type: [String], default: [] },
     admins: { type: [String], default: [] },
     lastMessage: {
-      type: {
-        text: String,
-        type: { type: String },
-        senderId: String,
-        at: Date,
-      },
-      default: null,
+      text: String,
+      type: { type: String },
+      senderId: String,
+      at: Date,
     },
     unread: { type: mongoose.Schema.Types.Mixed, default: {} },
   },

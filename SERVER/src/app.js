@@ -22,6 +22,12 @@ const origins = (process.env.CLIENT_ORIGIN || '')
   .split(',')
   .map((s) => s.trim())
   .filter(Boolean);
+const localAppOrigins = new Set([
+  'http://localhost',
+  'https://localhost',
+  'capacitor://localhost',
+  'ionic://localhost',
+]);
 
 if (!MONGO_URI || !JWT_SECRET) {
   console.error('Set MONGO_URI and JWT_SECRET in the environment.');
@@ -34,7 +40,17 @@ async function main() {
   const app = express();
 
   // CORS
-  app.use(cors({ origin: origins.length ? origins : true, credentials: true }));
+  const corsOptions = {
+    origin: (requestOrigin, callback) => {
+      if (!requestOrigin || !origins.length || origins.includes(requestOrigin) || localAppOrigins.has(requestOrigin)) {
+        return callback(null, true);
+      }
+      return callback(null, false);
+    },
+    credentials: true,
+  };
+  app.use(cors(corsOptions));
+  app.options('*', cors(corsOptions));
   app.use(express.json({ limit: '2mb' }));
 
   // Health check

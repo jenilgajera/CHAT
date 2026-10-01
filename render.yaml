@@ -2,7 +2,7 @@ services:
   - type: web
     name: friends-chat-api
     runtime: node
-    rootDir: server
+    rootDir: SERVER
     buildCommand: npm install
     startCommand: npm start
     envVars:

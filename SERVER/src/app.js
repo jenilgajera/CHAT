@@ -57,7 +57,10 @@ async function main() {
   app.get('/api/health', (_req, res) => res.json({ ok: true }));
 
   // Auth routes (login/register don't need auth middleware)
-  app.use('/api/auth', authRoutes(JWT_SECRET));
+  app.use('/api/auth', (req, _res, next) => {
+    req.jwtSecret = JWT_SECRET;
+    next();
+  }, authRoutes(JWT_SECRET));
 
   // Protected routes
   const auth = requireAuth(JWT_SECRET);

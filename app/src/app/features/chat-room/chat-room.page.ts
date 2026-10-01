@@ -188,7 +188,7 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
         text-align: center;
         font-size: 12px;
         margin: 10px auto;
-        background: color-mix(in srgb, var(--ion-background-color) 80%, #000 10%);
+        background: color-mix(in srgb, var(--fc-panel) 88%, var(--fc-text) 10%);
         width: fit-content;
         padding: 4px 10px;
         border-radius: 8px;
@@ -221,7 +221,7 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
       .reply-bar,
       .emojis {
         background: color-mix(in srgb, var(--fc-overlay) 70%, var(--fc-header));
-        color: #fff;
+        color: var(--fc-on-header);
         padding: 6px 10px;
         font-size: 13px;
       }

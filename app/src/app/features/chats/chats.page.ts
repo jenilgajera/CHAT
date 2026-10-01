@@ -129,7 +129,7 @@ import { formatListTime, millis } from '../../shared/time.util';
         transition: background 160ms ease;
       }
       ion-item:hover {
-        --background: #f5f7f8;
+        --background: var(--fc-hover);
       }
       h2 {
         margin: 0 0 4px;

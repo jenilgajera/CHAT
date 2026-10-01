@@ -62,7 +62,7 @@ import { formatClock } from './time.util';
         font-size: 12px;
         color: var(--fc-muted);
         margin: 8px auto;
-        background: color-mix(in srgb, var(--ion-background-color) 70%, #000 8%);
+        background: color-mix(in srgb, var(--fc-panel) 88%, var(--fc-text) 8%);
         padding: 4px 10px;
         border-radius: 8px;
         width: fit-content;
@@ -75,7 +75,7 @@ import { formatClock } from './time.util';
         border-radius: 8px;
         padding: 6px 8px 4px;
         margin: 2px 8px;
-        box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
+        box-shadow: 0 1px 0.5px var(--fc-shadow);
         background: var(--fc-panel);
         color: var(--fc-text);
       }
@@ -89,7 +89,7 @@ import { formatClock } from './time.util';
         margin-bottom: 2px;
       }
       .quote {
-        border-left: 3px solid #06cf9c;
+        border-left: 3px solid var(--fc-accent);
         padding: 4px 6px;
         margin-bottom: 4px;
         font-size: 12px;
@@ -112,14 +112,14 @@ import { formatClock } from './time.util';
         justify-content: flex-end;
         gap: 4px;
         font-size: 11px;
-        color: #667781;
+        color: var(--fc-muted);
         margin-top: 2px;
       }
       .ticks.read {
-        color: #53bdeb;
+        color: var(--fc-tick);
       }
       .deleted {
-        color: #667781;
+        color: var(--fc-muted);
       }
       .reactions {
         display: flex;

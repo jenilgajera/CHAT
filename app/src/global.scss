@@ -31,6 +31,8 @@
   --fc-shadow: rgb(32 44 51 / 12%);
   --fc-accent: #00a884;
   --fc-tick: #53bdeb;
+  --fc-segment: #e7f5f1;
+  --fc-segment-hover: #d3eee7;
   --ion-font-family: "Trebuchet MS", "Segoe UI", sans-serif;
 }
 
@@ -52,6 +54,8 @@
     --fc-shadow: rgb(0 0 0 / 30%);
     --fc-accent: #00a884;
     --fc-tick: #53bdeb;
+    --fc-segment: #202c33;
+    --fc-segment-hover: #2a3b43;
   }
 }
 
@@ -72,6 +76,8 @@
   --fc-shadow: rgb(0 0 0 / 30%);
   --fc-accent: #00a884;
   --fc-tick: #53bdeb;
+  --fc-segment: #202c33;
+  --fc-segment-hover: #2a3b43;
 }
 
 :root.theme-light {
@@ -90,6 +96,8 @@
   --fc-shadow: rgb(32 44 51 / 12%);
   --fc-accent: #00a884;
   --fc-tick: #53bdeb;
+  --fc-segment: #e7f5f1;
+  --fc-segment-hover: #d3eee7;
 }
 
 html,
@@ -149,6 +157,28 @@ ion-tab-button {
   font-size: 12px;
   font-weight: 700;
   letter-spacing: 0.02em;
+}
+
+ion-segment {
+  --background: color-mix(in srgb, var(--fc-header) 86%, var(--fc-panel));
+  padding: 4px;
+  border-radius: 10px;
+}
+
+ion-segment-button {
+  --color: color-mix(in srgb, var(--fc-on-header) 72%, transparent);
+  --color-checked: var(--fc-header);
+  --indicator-color: var(--fc-segment);
+  --background-hover: var(--fc-segment-hover);
+  --background-checked: var(--fc-segment);
+  min-height: 38px;
+  font-size: 12px;
+  font-weight: 700;
+  transition: background 160ms ease, color 160ms ease;
+}
+
+ion-segment-button::part(native) {
+  border-radius: 8px;
 }
 
 .chat-bg {

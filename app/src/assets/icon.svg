@@ -1,4 +1,4 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Friends Chat">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="REYOM REALLY">
   <rect width="512" height="512" fill="#fff"/>
   <g fill="none" stroke="#27394c" stroke-width="8">
     <path d="M4 0v248l128 128h248V128L252 0"/>
@@ -15,5 +15,9 @@
     <path d="M256 328l180 180H256z"/>
     <path d="M256 352l156 156H256z"/>
     <path d="M256 376l132 132H256z"/>
+  </g>
+  <g fill="#27394c" font-family="Georgia, serif" text-anchor="middle">
+    <text x="256" y="410" font-size="54" letter-spacing="7">REYOM</text>
+    <text x="256" y="462" font-size="25" letter-spacing="8">REALLY</text>
   </g>
 </svg>

@@ -23,6 +23,9 @@
   --fc-panel: #ffffff;
   --fc-line: #e5e7e9;
   --fc-page: #f0f2f5;
+  --fc-text: #111b21;
+  --fc-composer: #fff;
+  --fc-overlay: rgb(0 0 0 / 20%);
   --ion-font-family: "Trebuchet MS", "Segoe UI", sans-serif;
 }
 
@@ -36,6 +39,9 @@
     --fc-panel: #111b21;
     --fc-line: #26343d;
     --fc-page: #0b141a;
+    --fc-text: #e9edef;
+    --fc-composer: #202c33;
+    --fc-overlay: rgb(0 0 0 / 35%);
   }
 }
 
@@ -48,6 +54,9 @@
   --fc-panel: #111b21;
   --fc-line: #26343d;
   --fc-page: #0b141a;
+  --fc-text: #e9edef;
+  --fc-composer: #202c33;
+  --fc-overlay: rgb(0 0 0 / 35%);
 }
 
 :root.theme-light {

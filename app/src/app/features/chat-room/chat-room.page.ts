@@ -213,13 +213,13 @@ const EMOJIS = ['😀', '😂', '😍', '🥰', '😎', '😭', '🙏', '👍', 
         max-height: 120px;
         min-height: 40px;
         font: inherit;
-        background: #fff;
-        color: #111b21;
+        background: var(--fc-composer);
+        color: var(--fc-text);
         outline: 0;
       }
       .reply-bar,
       .emojis {
-        background: color-mix(in srgb, #000 20%, var(--fc-header));
+        background: color-mix(in srgb, var(--fc-overlay) 70%, var(--fc-header));
         color: #fff;
         padding: 6px 10px;
         font-size: 13px;

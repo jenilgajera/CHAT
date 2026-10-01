@@ -69,8 +69,8 @@ import { formatClock } from './time.util';
         padding: 6px 8px 4px;
         margin: 2px 8px;
         box-shadow: 0 1px 0.5px rgba(11, 20, 26, 0.13);
-        background: #fff;
-        color: #111;
+        background: var(--fc-panel);
+        color: var(--fc-text);
       }
       .bubble.mine {
         margin-left: auto;

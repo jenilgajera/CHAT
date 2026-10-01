@@ -11,6 +11,7 @@ import {
   IonLabel,
   IonList,
   IonSkeletonText,
+  IonSearchbar,
   IonTitle,
   IonToolbar,
 } from '@ionic/angular';
@@ -41,6 +42,7 @@ import { formatListTime, millis } from '../../shared/time.util';
     IonLabel,
     IonBadge,
     IonSkeletonText,
+    IonSearchbar,
     RouterLink,
     AvatarComponent,
     EmptyStateComponent,
@@ -56,6 +58,12 @@ import { formatListTime, millis } from '../../shared/time.util';
         </ion-buttons>
       </ion-toolbar>
     </ion-header>
+    <ion-searchbar
+      class="chat-search"
+      placeholder="Search chats"
+      [debounce]="120"
+      (ionInput)="query.set($any($event.detail.value) ?? '')"
+    ></ion-searchbar>
     <ion-content>
       @if (loading()) {
         <ion-list>
@@ -73,7 +81,7 @@ import { formatListTime, millis } from '../../shared/time.util';
         <app-empty-state title="No chats yet" subtitle="Tap the new-chat icon to message a friend."></app-empty-state>
       } @else {
         <ion-list>
-          @for (chat of chats(); track chat.id) {
+          @for (chat of filteredChats(); track chat.id) {
             <ion-item [button]="true" (click)="open(chat.id)" [detail]="false">
               <app-avatar [name]="title(chat)" [src]="photo(chat)"></app-avatar>
               <ion-label>
@@ -101,6 +109,14 @@ import { formatListTime, millis } from '../../shared/time.util';
       ion-content {
         --background: var(--fc-panel);
       }
+      .chat-search {
+        --background: var(--fc-page);
+        --border-radius: 10px;
+        --box-shadow: none;
+        --color: var(--fc-text);
+        --placeholder-color: var(--fc-muted);
+        padding: 8px 12px;
+      }
       ion-list {
         padding: 0;
       }
@@ -117,7 +133,7 @@ import { formatListTime, millis } from '../../shared/time.util';
       }
       h2 {
         margin: 0 0 4px;
-        color: #111b21;
+        color: var(--fc-text);
         font-size: 16px;
         font-weight: 700;
       }
@@ -157,10 +173,19 @@ export class ChatsPage implements OnInit, OnDestroy {
   private readonly notify = inject(NotifyService);
   private readonly router = inject(Router);
   readonly chats = signal<Chat[]>([]);
+  readonly query = signal('');
   readonly loading = signal(true);
   readonly formatListTime = formatListTime;
   private unsub: (() => void) | null = null;
   private lastIds = new Map<string, string>();
+
+  filteredChats(): Chat[] {
+    const query = this.query().trim().toLowerCase();
+    if (!query) {
+      return this.chats();
+    }
+    return this.chats().filter((chat) => `${this.title(chat)} ${this.preview(chat)}`.toLowerCase().includes(query));
+  }
 
   constructor() {
     addIcons({ createOutline });

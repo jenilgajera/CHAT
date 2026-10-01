@@ -167,12 +167,17 @@ const EMOJIS = ['😀', '😂', '😍', '🥰', '😎', '😭', '🙏', '👍', 
         align-items: center;
         gap: 10px;
         min-width: 0;
+        flex: 1;
+        cursor: pointer;
       }
       app-avatar {
         --av-size: 36px;
       }
       .t {
         font-weight: 600;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
       }
       .s {
         font-size: 12px;
@@ -196,6 +201,8 @@ const EMOJIS = ['😀', '😂', '😍', '🥰', '😎', '😭', '🙏', '👍', 
         display: flex;
         align-items: flex-end;
         gap: 4px;
+        max-width: 980px;
+        margin: 0 auto;
       }
       textarea {
         flex: 1;
@@ -204,6 +211,11 @@ const EMOJIS = ['😀', '😂', '😍', '🥰', '😎', '😭', '🙏', '👍', 
         border-radius: 20px;
         padding: 10px 12px;
         max-height: 120px;
+        min-height: 40px;
+        font: inherit;
+        background: #fff;
+        color: #111b21;
+        outline: 0;
       }
       .reply-bar,
       .emojis {
@@ -226,6 +238,11 @@ const EMOJIS = ['😀', '😂', '😍', '🥰', '😎', '😭', '🙏', '👍', 
       .center {
         text-align: center;
         padding: 8px;
+      }
+      @media (min-width: 760px) {
+        .composer {
+          padding-inline: 20px;
+        }
       }
     `,
   ],

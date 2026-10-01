@@ -98,6 +98,37 @@ import { formatListTime, millis } from '../../shared/time.util';
         --av-size: 48px;
         margin-inline-end: 12px;
       }
+      ion-content {
+        --background: var(--fc-panel);
+      }
+      ion-list {
+        padding: 0;
+      }
+      ion-item {
+        --background: var(--fc-panel);
+        --border-color: var(--fc-line);
+        --min-height: 76px;
+        --padding-start: 16px;
+        --inner-padding-end: 14px;
+        transition: background 160ms ease;
+      }
+      ion-item:hover {
+        --background: #f5f7f8;
+      }
+      h2 {
+        margin: 0 0 4px;
+        color: #111b21;
+        font-size: 16px;
+        font-weight: 700;
+      }
+      p {
+        margin: 0;
+        color: var(--fc-muted);
+        font-size: 13px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
       .end {
         display: flex;
         flex-direction: column;
@@ -110,6 +141,11 @@ import { formatListTime, millis } from '../../shared/time.util';
       }
       h2 {
         font-weight: 600;
+      }
+      ion-badge {
+        min-width: 20px;
+        border-radius: 999px;
+        font-size: 11px;
       }
     `,
   ],

@@ -56,6 +56,7 @@ export interface ChatMessage {
   createdAt: IsoDate;
   deliveredTo: string[];
   readBy: string[];
+  reactions: Record<string, string[]>;
   deletedFor: string[];
   deletedForAll: boolean;
   clientId: string;

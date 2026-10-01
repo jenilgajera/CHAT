@@ -33,6 +33,7 @@ import { compressChatImage } from '../../shared/image.util';
 import { dayKey, formatDayLabel, formatLastSeen } from '../../shared/time.util';
 
 const EMOJIS = ['😀', '😂', '😍', '🥰', '😎', '😭', '🙏', '👍', '👎', '🔥', '❤️', '🎉', '💯', '✨', '👋', '🤝', '😅', '😴', '🤔', '🙌'];
+const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
 
 @Component({
   selector: 'app-chat-room',
@@ -479,6 +480,9 @@ export class ChatRoomPage implements OnDestroy {
     const buttons: Array<{ text: string; role?: string; handler?: () => void }> = [
       { text: 'Reply', handler: () => this.reply(msg) },
     ];
+    for (const emoji of REACTIONS) {
+      buttons.push({ text: `React ${emoji}`, handler: () => void this.chats.react(this.chatId, msg.id, emoji) });
+    }
     if (msg.text && !msg.deletedForAll) {
       buttons.push({
         text: 'Copy',
@@ -579,6 +583,7 @@ export class ChatRoomPage implements OnDestroy {
       createdAt: null,
       deliveredTo: [this.uid],
       readBy: [this.uid],
+      reactions: {},
       deletedFor: [],
       deletedForAll: false,
       clientId,

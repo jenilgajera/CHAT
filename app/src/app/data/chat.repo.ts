@@ -183,4 +183,8 @@ export class ChatRepo {
   async deleteForEveryone(chatId: string, messageId: string): Promise<void> {
     await this.api.post(`/chats/${chatId}/messages/${messageId}/delete-all`);
   }
+
+  async react(chatId: string, messageId: string, emoji: string): Promise<void> {
+    await this.api.post(`/chats/${chatId}/messages/${messageId}/react`, { emoji });
+  }
 }

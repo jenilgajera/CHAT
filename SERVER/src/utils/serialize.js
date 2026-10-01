@@ -57,6 +57,7 @@ function publicMessage(msg) {
     createdAt: iso(msg.createdAt),
     deliveredTo: msg.deliveredTo || [],
     readBy: msg.readBy || [],
+    reactions: msg.reactions && typeof msg.reactions === 'object' ? msg.reactions : {},
     deletedFor: msg.deletedFor || [],
     deletedForAll: Boolean(msg.deletedForAll),
     clientId: msg.clientId || String(msg._id),

@@ -13,6 +13,7 @@ const messageSchema = new mongoose.Schema(
     },
     deliveredTo: { type: [String], default: [] },
     readBy: { type: [String], default: [] },
+    reactions: { type: mongoose.Schema.Types.Mixed, default: {} },
     deletedFor: { type: [String], default: [] },
     deletedForAll: { type: Boolean, default: false },
     clientId: { type: String, default: '' },

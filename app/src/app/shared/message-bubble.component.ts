@@ -45,6 +45,13 @@ import { formatClock } from './time.util';
             </span>
           }
         </div>
+        @if (reactionEntries().length) {
+          <div class="reactions">
+            @for (reaction of reactionEntries(); track reaction[0]) {
+              <span class="reaction">{{ reaction[0] }} {{ reaction[1] }}</span>
+            }
+          </div>
+        }
       </button>
     }
   `,
@@ -114,6 +121,19 @@ import { formatClock } from './time.util';
       .deleted {
         color: #667781;
       }
+      .reactions {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 3px;
+        margin-top: 4px;
+      }
+      .reaction {
+        border: 1px solid color-mix(in srgb, var(--fc-muted) 24%, transparent);
+        border-radius: 999px;
+        padding: 1px 6px;
+        font-size: 12px;
+        background: color-mix(in srgb, var(--fc-panel) 82%, transparent);
+      }
     `,
   ],
 })
@@ -123,6 +143,12 @@ export class MessageBubbleComponent {
   readonly showName = input(false);
   readonly senderName = input('');
   readonly nameColor = input('#00a884');
+
+  reactionEntries(): Array<[string, number]> {
+    return Object.entries(this.message().reactions || {})
+      .map(([emoji, users]) => [emoji, users.length] as [string, number])
+      .filter((entry) => entry[1] > 0);
+  }
   readonly ticks = input<'sent' | 'delivered' | 'read'>('sent');
   readonly open = output<ChatMessage>();
   readonly menu = output<ChatMessage>();

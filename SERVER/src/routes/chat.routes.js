@@ -145,6 +145,29 @@ router.post('/:id/delivered', requireActive, memberChat, async (req, res) => {
   res.json({ ok: true });
 });
 
+// POST /api/chats/:id/messages/:mid/react
+router.post('/:id/messages/:mid/react', requireActive, memberChat, async (req, res) => {
+  const emoji = String(req.body.emoji || '');
+  const allowed = new Set(['👍', '❤️', '😂', '😮', '😢', '🙏']);
+  if (!allowed.has(emoji)) return error(res, 400, 'Reaction is not supported.');
+  const msg = await Message.findOne({ _id: req.params.mid, chatId: String(req.chat._id) });
+  if (!msg || msg.deletedForAll) return error(res, 404, 'Message not found.');
+  const uid = String(req.user._id);
+  const reactions = { ...(msg.reactions || {}) };
+  const users = new Set(Array.isArray(reactions[emoji]) ? reactions[emoji].map(String) : []);
+  if (users.has(uid)) users.delete(uid);
+  else users.add(uid);
+  if (users.size) reactions[emoji] = [...users];
+  else delete reactions[emoji];
+  msg.reactions = reactions;
+  msg.markModified('reactions');
+  await msg.save();
+  const { emitMessage } = require('../realtime/socket');
+  const payload = publicMessage(msg);
+  emitMessage(req.chat, payload);
+  res.json({ message: payload });
+});
+
 // POST /api/chats/:id/messages/:mid/delete-me
 router.post('/:id/messages/:mid/delete-me', requireActive, memberChat, async (req, res) => {
   const msg = await Message.findOne({ _id: req.params.mid, chatId: String(req.chat._id) });

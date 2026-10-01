@@ -2,10 +2,10 @@
   "name": "friends-chat-server",
   "private": true,
   "version": "1.0.0",
-  "main": "src/index.js",
+  "main": "src/app.js",
   "scripts": {
-    "start": "node src/index.js",
-    "dev": "node --watch src/index.js"
+    "start": "node src/app.js",
+    "dev": "node --watch src/app.js"
   },
   "engines": {
     "node": ">=20"

@@ -58,6 +58,10 @@ router.post('/register', async (req, res) => {
     if (err.code === 11000) {
       return error(res, 409, 'That username is already taken.');
     }
+    console.error('Registration failed:', err);
+    if (err.name === 'ValidationError') {
+      return error(res, 400, 'Registration data is invalid.');
+    }
     return error(res, 500, 'Could not register.');
   }
 });

@@ -1,4 +1,5 @@
 const TOKEN_KEY = 'friendschat.token';
+const USER_KEY = 'friendschat.user';
 
 export class ApiError extends Error {
   constructor(
@@ -18,5 +19,22 @@ export function setToken(token: string | null): void {
     localStorage.setItem(TOKEN_KEY, token);
   } else {
     localStorage.removeItem(TOKEN_KEY);
+  }
+}
+
+export function getStoredUser<T>(): T | null {
+  try {
+    const value = localStorage.getItem(USER_KEY);
+    return value ? (JSON.parse(value) as T) : null;
+  } catch {
+    return null;
+  }
+}
+
+export function setStoredUser(user: unknown | null): void {
+  if (user) {
+    localStorage.setItem(USER_KEY, JSON.stringify(user));
+  } else {
+    localStorage.removeItem(USER_KEY);
   }
 }

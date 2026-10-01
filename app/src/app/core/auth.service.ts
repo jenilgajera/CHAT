@@ -2,7 +2,7 @@ import { Injectable, inject, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { ApiService } from './api.service';
 import { SocketService } from './socket.service';
-import { getToken, setToken } from './session';
+import { ApiError, getStoredUser, getToken, setStoredUser, setToken } from './session';
 import { AppUser } from '../data/models';
 
 export type GateState = 'loading' | 'anon' | 'pending' | 'disabled' | 'active';
@@ -111,6 +111,7 @@ export class AuthService {
     this.unsubProfile = null;
     this.sockets.disconnect();
     setToken(null);
+    setStoredUser(null);
     this.signedIn.set(false);
     this.profile.set(null);
     await this.router.navigateByUrl('/auth');
@@ -129,19 +130,27 @@ export class AuthService {
       this.markReady();
       return;
     }
+    const cached = getStoredUser<AppUser>();
+    if (cached) {
+      this.applySession(token, cached);
+    }
     try {
       const data = await this.api.get<{ user: AppUser }>('/auth/me');
       this.applySession(token, data.user);
-    } catch {
-      setToken(null);
-      this.signedIn.set(false);
-      this.profile.set(null);
+    } catch (err) {
+      if (err instanceof ApiError && err.status === 401) {
+        setToken(null);
+        setStoredUser(null);
+        this.signedIn.set(false);
+        this.profile.set(null);
+      }
     }
     this.markReady();
   }
 
   private applySession(token: string, user: AppUser): void {
     setToken(token);
+    setStoredUser(user);
     this.signedIn.set(true);
     this.profile.set(user);
     this.sockets.connect();

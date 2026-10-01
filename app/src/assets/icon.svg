@@ -1,5 +1,19 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Friends Chat">
-  <circle cx="32" cy="32" r="31" fill="#00a884"/>
-  <path d="M17 19.5A8.5 8.5 0 0 1 25.5 11h13A8.5 8.5 0 0 1 47 19.5v13a8.5 8.5 0 0 1-8.5 8.5H29l-9.5 8v-8.7A8.5 8.5 0 0 1 17 32.5z" fill="#fff"/>
-  <path d="M26 27h12M26 33h8" fill="none" stroke="#00a884" stroke-linecap="round" stroke-width="3"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Friends Chat">
+  <rect width="512" height="512" fill="#fff"/>
+  <g fill="none" stroke="#27394c" stroke-width="8">
+    <path d="M4 0v248l128 128h248V128L252 0"/>
+    <path d="M28 0v238l128 128h224V152L260 0"/>
+    <path d="M52 0v228l128 128h200V176L268 0"/>
+    <path d="M76 0v218l128 128h176V200L276 0"/>
+    <path d="M100 0v208l128 128h152V224L284 0"/>
+    <path d="M124 0v198l128 128h128V248L292 0"/>
+  </g>
+  <g fill="none" stroke="#d59a25" stroke-width="8">
+    <path d="M256 256l252 252H256z"/>
+    <path d="M256 280l228 228H256z"/>
+    <path d="M256 304l204 204H256z"/>
+    <path d="M256 328l180 180H256z"/>
+    <path d="M256 352l156 156H256z"/>
+    <path d="M256 376l132 132H256z"/>
+  </g>
 </svg>

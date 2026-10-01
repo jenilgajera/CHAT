@@ -148,14 +148,11 @@ ion-tab-button {
   width: 72px;
   height: 72px;
   margin: 0 auto 12px;
-  border-radius: 18px;
-  display: grid;
-  place-items: center;
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgb(255 255 255 / 22%);
+  display: block;
+  border-radius: 50%;
+  background: #00a884;
+  border: 3px solid rgb(255 255 255 / 28%);
   box-shadow: 0 12px 30px rgb(0 0 0 / 12%);
-  font-weight: 800;
-  font-size: 22px;
 }
 
 .auth-screen .form,

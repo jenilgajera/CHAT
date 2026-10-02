@@ -84,7 +84,7 @@ router.get('/:id/messages/latest', requireActive, memberChat, async (req, res) =
 router.get('/:id/messages', requireActive, memberChat, async (req, res) => {
   const before = req.query.before ? String(req.query.before) : '';
   const limit = Math.min(Number(req.query.limit) || PAGE_SIZE, 50);
-  const filter = { chatId: String(req.chat._id) };
+  const filter = { chatId: String(req.chat._id), deletedFor: { $ne: String(req.user._id) } };
   if (before) {
     const cursor = await Message.findById(before);
     if (cursor) filter.createdAt = { $lt: cursor.createdAt };
@@ -93,6 +93,23 @@ router.get('/:id/messages', requireActive, memberChat, async (req, res) => {
   const messages = docs.map(publicMessage).reverse();
   const oldestId = docs.length ? String(docs[docs.length - 1]._id) : null;
   res.json({ messages, oldestId });
+});
+
+// Clear messages only for the current user.
+router.post('/:id/clear', requireActive, memberChat, async (req, res) => {
+  const uid = String(req.user._id);
+  await Message.updateMany({ chatId: String(req.chat._id) }, { $addToSet: { deletedFor: uid } });
+  res.json({ ok: true });
+});
+
+// Leave a group or remove the current user's chat membership.
+router.post('/:id/leave', requireActive, memberChat, async (req, res) => {
+  const uid = String(req.user._id);
+  req.chat.members = req.chat.members.filter((id) => id !== uid);
+  req.chat.admins = req.chat.admins.filter((id) => id !== uid);
+  await req.chat.save();
+  await emitChatToMembers(req.chat);
+  res.json({ ok: true });
 });
 
 // POST /api/chats/:id/messages

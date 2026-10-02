@@ -18,7 +18,7 @@ import {
   IonToolbar,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBack, attach, happy, informationCircle, send } from 'ionicons/icons';
+import { arrowBack, attach, ellipsisVertical, happy, informationCircle, send } from 'ionicons/icons';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { AuthService } from '../../core/auth.service';
 import { NotifyService } from '../../core/notify.service';
@@ -82,6 +82,9 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
               </ion-button>
             }
             <ion-button (click)="toggleMute()" aria-label="Mute chat">{{ muted() ? 'Unmute' : 'Mute' }}</ion-button>
+            <ion-button (click)="chatActions(c)" aria-label="Chat options">
+              <ion-icon slot="icon-only" name="ellipsis-vertical"></ion-icon>
+            </ion-button>
           </ion-buttons>
         }
       </ion-toolbar>
@@ -282,7 +285,7 @@ export class ChatRoomPage implements OnDestroy {
   private localPending: ChatMessage[] = [];
 
   constructor() {
-    addIcons({ arrowBack, informationCircle, send, attach, happy });
+    addIcons({ arrowBack, informationCircle, send, attach, happy, ellipsisVertical });
     this.uid = this.auth.uid();
     this.chatId = this.route.snapshot.paramMap.get('id') ?? '';
     this.notify.setOpenChat(this.chatId);
@@ -503,6 +506,39 @@ export class ChatRoomPage implements OnDestroy {
     buttons.push({ text: 'Cancel', role: 'cancel' });
     const sheet = await this.sheets.create({ header: 'Message', buttons });
     await sheet.present();
+  }
+
+  async chatActions(chat: Chat): Promise<void> {
+    const buttons: Array<{ text: string; role?: string; handler?: () => void }> = [
+      {
+        text: 'Clear chat',
+        role: 'destructive',
+        handler: () => {
+          void this.chats.clearChat(this.chatId).then(() => this.messages.set([]));
+        },
+      },
+    ];
+    if (chat.type === 'group') {
+      buttons.push({
+        text: 'Leave group',
+        role: 'destructive',
+        handler: () => void this.leaveChat(),
+      });
+    } else if (chat.type === 'private') {
+      buttons.push({
+        text: 'Delete chat for me',
+        role: 'destructive',
+        handler: () => void this.leaveChat(),
+      });
+    }
+    buttons.push({ text: 'Cancel', role: 'cancel' });
+    const sheet = await this.sheets.create({ header: 'Chat options', buttons });
+    await sheet.present();
+  }
+
+  private async leaveChat(): Promise<void> {
+    await this.chats.leaveChat(this.chatId);
+    await this.router.navigateByUrl('/tabs/chats');
   }
 
   async onScroll(ev: CustomEvent): Promise<void> {

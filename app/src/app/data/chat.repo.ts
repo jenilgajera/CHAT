@@ -184,6 +184,14 @@ export class ChatRepo {
     await this.api.post(`/chats/${chatId}/messages/${messageId}/delete-all`);
   }
 
+  async clearChat(chatId: string): Promise<void> {
+    await this.api.post(`/chats/${chatId}/clear`);
+  }
+
+  async leaveChat(chatId: string): Promise<void> {
+    await this.api.post(`/chats/${chatId}/leave`);
+  }
+
   async react(chatId: string, messageId: string, emoji: string): Promise<void> {
     await this.api.post(`/chats/${chatId}/messages/${messageId}/react`, { emoji });
   }

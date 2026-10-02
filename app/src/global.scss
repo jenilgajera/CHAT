@@ -118,6 +118,33 @@ ion-app {
   background: var(--fc-page);
 }
 
+.app-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 18px;
+  padding: 24px;
+  background: var(--fc-page);
+  color: var(--fc-text);
+  text-align: center;
+}
+
+.app-loading img {
+  width: min(180px, 46vw);
+  height: min(180px, 46vw);
+  object-fit: contain;
+  border-radius: 20px;
+}
+
+.app-loading strong {
+  font-size: clamp(18px, 5vw, 26px);
+  letter-spacing: 0.08em;
+}
+
 ion-content {
   --background: var(--fc-panel);
 }

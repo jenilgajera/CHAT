@@ -12,6 +12,12 @@ import { ThemeService } from './core/theme.service';
   imports: [IonApp, IonRouterOutlet],
   template: `
     <ion-app>
+      @if (!auth.ready()) {
+        <div class="app-loading" role="status" aria-label="Loading REYOM GROUP">
+          <img src="https://cdn.dribbble.com/userupload/22307587/file/original-ba4b14f06771de8c2363dd09d5d7b4aa.gif" alt="Loading" />
+          <strong>REYOM GROUP</strong>
+        </div>
+      }
       @if (!notify.online()) {
         <div class="reconnect" role="status">Connecting...</div>
       }
@@ -21,7 +27,7 @@ import { ThemeService } from './core/theme.service';
 })
 export class AppComponent {
   readonly notify = inject(NotifyService);
-  private readonly auth = inject(AuthService);
+  readonly auth = inject(AuthService);
   private readonly presence = inject(PresenceService);
   private readonly push = inject(PushService);
   private readonly theme = inject(ThemeService);

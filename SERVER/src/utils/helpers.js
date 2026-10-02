@@ -2,6 +2,7 @@ const { randomUUID } = require('crypto');
 const { Settings, Message, Chat, User } = require('../models');
 const { publicMessage, publicChat } = require('./serialize');
 const { emitMessage, emitChatToMembers } = require('../realtime/socket');
+const { notifyChatMembers } = require('../services/push.service');
 
 const MAX_IMAGE = 150000;
 const ANNOUNCEMENTS = 'announcements';
@@ -79,6 +80,7 @@ async function sendMessage({ chat, senderId, type, text, image, replyTo, clientI
   const payload = publicMessage(msg);
   emitMessage(chat, payload);
   await emitChatToMembers(chat);
+  await notifyChatMembers({ chat, senderId, text: msg.text, type: msg.type });
   return payload;
 }
 

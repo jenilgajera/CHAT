@@ -30,6 +30,14 @@ export class PushService {
     if (perm.receive !== 'granted') {
       return;
     }
+    await PushNotifications.createChannel({
+      id: 'friends-chat-messages',
+      name: 'Friends Chat messages',
+      description: 'New private and group chat messages',
+      importance: 5,
+      visibility: 1,
+      sound: 'default',
+    });
     await PushNotifications.register();
     await PushNotifications.addListener('registration', (token) => {
       const uid = this.auth.uid();

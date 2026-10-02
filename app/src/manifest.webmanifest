@@ -8,9 +8,9 @@
   "description": "Private WhatsApp-style messenger for a small friends group.",
   "icons": [
     {
-      "src": "assets/reyom-logo.png",
+      "src": "assets/reyom-logo.jpg",
       "sizes": "any",
-      "type": "image/png",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]

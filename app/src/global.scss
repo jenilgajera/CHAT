@@ -220,6 +220,17 @@ ion-segment-button::part(native) {
   box-shadow: 0 12px 30px var(--fc-shadow);
 }
 
+.auth-screen .reyom-logo {
+  width: min(180px, 58vw);
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  border-radius: 18px;
+  background: #fff;
+  border: 0;
+  padding: 8px;
+}
+
 .auth-screen .form,
 .auth-screen .actions,
 .auth-screen .hint,

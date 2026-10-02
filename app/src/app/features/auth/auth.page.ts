@@ -20,8 +20,8 @@ import { NotifyService } from '../../core/notify.service';
   template: `
     <ion-content class="auth-screen">
       <div class="hero">
-        <img class="logo" src="assets/icon.svg" alt="Friends Chat" />
-        <h1>Friends Chat</h1>
+        <img class="logo reyom-logo" src="assets/reyom-logo.jpg" alt="REYOM WH" />
+        <h1>REYOM WH</h1>
         <p>Private messenger for your group</p>
       </div>
       <ion-list [inset]="true" class="form">

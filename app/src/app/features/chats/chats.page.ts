@@ -50,7 +50,7 @@ import { formatListTime, millis } from '../../shared/time.util';
   template: `
     <ion-header>
       <ion-toolbar class="wa-toolbar">
-        <ion-title>Friends Chat</ion-title>
+        <ion-title>REYOM WH</ion-title>
         <ion-buttons slot="end">
           <ion-button routerLink="/new-chat" aria-label="New chat">
             <ion-icon slot="icon-only" name="create-outline"></ion-icon>

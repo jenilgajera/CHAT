@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">Friends Chat</string>
-    <string name="title_activity_main">Friends Chat</string>
+    <string name="app_name">REYOM WH</string>
+    <string name="title_activity_main">REYOM WH</string>
     <string name="package_name">app.friendschat.messenger</string>
     <string name="custom_url_scheme">app.friendschat.messenger</string>
 </resources>

@@ -1,6 +1,6 @@
 {
-  "name": "Friends Chat",
-  "short_name": "Friends",
+  "name": "REYOM WH",
+  "short_name": "REYOM",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#efeae2",
@@ -8,9 +8,9 @@
   "description": "Private WhatsApp-style messenger for a small friends group.",
   "icons": [
     {
-      "src": "assets/icon.svg",
+      "src": "assets/reyom-logo.jpg",
       "sizes": "any",
-      "type": "image/svg+xml",
+      "type": "image/jpeg",
       "purpose": "any maskable"
     }
   ]

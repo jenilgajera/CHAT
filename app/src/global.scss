@@ -126,6 +126,12 @@ ion-toolbar {
   --min-height: 58px;
 }
 
+ion-title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .wa-toolbar {
   --background: var(--fc-header);
   --color: var(--fc-on-header);
@@ -163,6 +169,8 @@ ion-segment {
   --background: color-mix(in srgb, var(--fc-header) 86%, var(--fc-panel));
   padding: 4px;
   border-radius: 10px;
+  width: 100%;
+  overflow-x: auto;
 }
 
 ion-segment-button {
@@ -175,6 +183,7 @@ ion-segment-button {
   font-size: 12px;
   font-weight: 700;
   transition: background 160ms ease, color 160ms ease;
+  flex: 1 0 auto;
 }
 
 ion-segment-button::part(native) {
@@ -274,6 +283,38 @@ ion-segment-button::part(native) {
 .auth-screen .hint {
   font-size: 13px;
   opacity: 0.85;
+}
+
+@media (max-width: 420px) {
+  .wa-toolbar {
+    --padding-start: 8px;
+    --padding-end: 4px;
+  }
+
+  .wa-toolbar ion-button {
+    --padding-start: 5px;
+    --padding-end: 5px;
+    margin: 0;
+    font-size: 11px;
+  }
+
+  .auth-screen .hero {
+    padding-top: 28px;
+  }
+
+  .auth-screen .hero h1 {
+    font-size: 25px;
+    margin: 8px 0;
+  }
+
+  .auth-screen .hero p {
+    margin: 0 0 8px;
+    font-size: 14px;
+  }
+
+  .auth-screen .reyom-logo {
+    width: min(150px, 52vw);
+  }
 }
 
 .incoming-toast {

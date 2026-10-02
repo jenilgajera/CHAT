@@ -173,6 +173,51 @@ interface AdminUserRow {
       }
     </ion-content>
   `,
+  styles: [
+    `
+      ion-content {
+        --background: var(--fc-panel);
+      }
+      ion-list {
+        margin-inline: 0;
+      }
+      ion-item {
+        --background: var(--fc-panel);
+        --border-color: var(--fc-line);
+        --inner-padding-end: 10px;
+      }
+      ion-label {
+        min-width: 0;
+      }
+      h2,
+      p {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+      }
+      ion-item ion-button {
+        flex: 0 0 auto;
+        margin-inline: 2px;
+      }
+      @media (max-width: 520px) {
+        ion-segment-button {
+          min-width: 82px;
+        }
+        ion-item {
+          flex-wrap: wrap;
+          --min-height: 60px;
+        }
+        ion-item ion-label {
+          flex: 1 1 100%;
+          padding-block: 6px;
+        }
+        ion-item ion-button {
+          margin-bottom: 6px;
+          font-size: 12px;
+        }
+      }
+    `,
+  ],
 })
 export class AdminPage implements OnInit, OnDestroy {
   private readonly admin = inject(AdminRepo);

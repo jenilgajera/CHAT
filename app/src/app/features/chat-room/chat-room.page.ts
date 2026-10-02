@@ -191,6 +191,9 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
         flex: 1;
         cursor: pointer;
       }
+      .head > div:last-child {
+        min-width: 0;
+      }
       app-avatar {
         --av-size: 36px;
       }
@@ -293,6 +296,32 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
       @media (min-width: 760px) {
         .composer {
           padding-inline: 20px;
+        }
+      }
+      @media (max-width: 420px) {
+        .head {
+          gap: 6px;
+        }
+        app-avatar {
+          --av-size: 32px;
+        }
+        .s {
+          max-width: 100px;
+          overflow: hidden;
+          text-overflow: ellipsis;
+          white-space: nowrap;
+        }
+        .row {
+          gap: 1px;
+        }
+        .row ion-button {
+          --padding-start: 4px;
+          --padding-end: 4px;
+          margin: 0;
+        }
+        textarea {
+          min-width: 0;
+          padding-inline: 10px;
         }
       }
     `,

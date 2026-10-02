@@ -13,8 +13,11 @@ export class ChatRepo {
     return this.sockets.on<Chat[]>('chats:updated', (chats) => cb(chats));
   }
 
-  listenChat(chatId: string, cb: (chat: Chat | null) => void): () => void {
-    void this.api.get<{ chat: Chat }>(`/chats/${chatId}`).then((data) => cb(data.chat));
+  listenChat(chatId: string, cb: (chat: Chat | null) => void, onError?: (error: unknown) => void): () => void {
+    void this.api
+      .get<{ chat: Chat }>(`/chats/${chatId}`)
+      .then((data) => cb(data.chat))
+      .catch((error: unknown) => onError?.(error));
     this.sockets.emit('join:chat', chatId);
     return this.sockets.on<Chat>('chat:updated', (chat) => {
       if (chat?.id === chatId) {
@@ -26,6 +29,7 @@ export class ChatRepo {
   listenLatestMessages(
     chatId: string,
     cb: (messages: ChatMessage[], oldestId: string | null) => void,
+    onError?: (error: unknown) => void,
   ): () => void {
     const load = async () => {
       const data = await this.api.get<{ messages: ChatMessage[]; oldestId: string | null }>(
@@ -33,11 +37,11 @@ export class ChatRepo {
       );
       cb(data.messages, data.oldestId);
     };
-    void load();
+    void load().catch((error: unknown) => onError?.(error));
     this.sockets.emit('join:chat', chatId);
     const offNew = this.sockets.on<{ chatId: string; message: ChatMessage }>('message:new', (payload) => {
       if (payload.chatId === chatId) {
-        void load();
+        void load().catch((error: unknown) => onError?.(error));
       }
     });
     return () => {
@@ -61,13 +65,9 @@ export class ChatRepo {
     return { messages: data.messages, last: data.oldestId };
   }
 
-  async getChat(chatId: string): Promise<Chat | null> {
-    try {
-      const data = await this.api.get<{ chat: Chat }>(`/chats/${chatId}`);
-      return data.chat;
-    } catch {
-      return null;
-    }
+  async getChat(chatId: string): Promise<Chat> {
+    const data = await this.api.get<{ chat: Chat }>(`/chats/${chatId}`);
+    return data.chat;
   }
 
   async ensurePrivateChat(_myUid: string, otherUid: string): Promise<string> {

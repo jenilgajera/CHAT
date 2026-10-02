@@ -22,6 +22,7 @@ import { arrowBack, attach, call, close, ellipsisVertical, happy, informationCir
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { AuthService } from '../../core/auth.service';
 import { NotifyService } from '../../core/notify.service';
+import { ApiError } from '../../core/session';
 import { SocketService } from '../../core/socket.service';
 import { ChatRepo } from '../../data/chat.repo';
 import { UserRepo } from '../../data/user.repo';
@@ -100,6 +101,13 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
         </ion-toolbar>
       }
     </ion-header>
+    @if (loadError(); as error) {
+      <div class="chat-error" role="alert">
+        <span>{{ error }}</span>
+        <ion-button size="small" fill="outline" (click)="retryLoad()">Retry</ion-button>
+        <ion-button size="small" fill="clear" (click)="back()">Back</ion-button>
+      </div>
+    }
     @if (callOn()) {
       <div class="call-panel">
         <video #remoteVideo class="remote-video" autoplay playsinline></video>
@@ -289,6 +297,18 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
         display: flex;
         justify-content: center;
       }
+      .chat-error {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        background: color-mix(in srgb, var(--ion-color-danger) 14%, var(--fc-panel));
+        color: var(--fc-text);
+        font-size: 13px;
+      }
+      .chat-error span {
+        flex: 1;
+      }
       .center {
         text-align: center;
         padding: 8px;
@@ -351,6 +371,7 @@ export class ChatRoomPage implements OnDestroy {
   readonly typingIds = signal<string[]>([]);
   readonly muted = signal(false);
   readonly callOn = signal(false);
+  readonly loadError = signal<string | null>(null);
   readonly colorFromName = colorFromName;
   readonly emojis = EMOJIS;
   query = '';
@@ -651,7 +672,7 @@ export class ChatRoomPage implements OnDestroy {
       this.chats.listenChat(this.chatId, (c) => {
         this.chat.set(c);
         this.isGroup = c?.type === 'group';
-      }),
+      }, (error) => this.handleLoadError(error)),
     );
     this.unsubs.push(
       this.chats.listenLatestMessages(this.chatId, (msgs, oldestId) => {
@@ -667,7 +688,7 @@ export class ChatRoomPage implements OnDestroy {
         if (shouldScroll) {
           queueMicrotask(() => void this.scroller?.scrollToBottom(300));
         }
-      }),
+      }, (error) => this.handleLoadError(error)),
     );
     this.unsubs.push(
       this.chats.listenTyping(this.chatId, this.uid, (ids) => this.typingIds.set(ids)),
@@ -685,6 +706,30 @@ export class ChatRoomPage implements OnDestroy {
     } catch {
       // offline ok
     }
+  }
+
+  retryLoad(): void {
+    for (const unsubscribe of this.unsubs) {
+      unsubscribe();
+    }
+    this.unsubs = [];
+    this.loadError.set(null);
+    void this.boot();
+  }
+
+  private handleLoadError(error: unknown): void {
+    if (error instanceof ApiError && error.status === 401) {
+      return;
+    }
+    const message = error instanceof ApiError && error.status === 403
+      ? 'You are no longer a member of this chat.'
+      : error instanceof ApiError && error.status === 404
+        ? 'This chat is no longer available.'
+        : error instanceof Error
+          ? error.message
+          : 'Could not load this chat. Check your connection.';
+    this.loadError.set(message);
+    void this.notify.show(message, 'danger');
   }
 
   async startVideoCall(): Promise<void> {

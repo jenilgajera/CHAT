@@ -759,7 +759,7 @@ export class ChatRoomPage implements OnDestroy {
       this.sendCall('offer', offer);
     } catch {
       this.endVideoCall();
-      await this.notify.show('Camera and microphone permission is required for video calls.', 'danger');
+      await this.notify.show('Allow camera and microphone in Android Settings, then try again.', 'danger');
     }
   }
 

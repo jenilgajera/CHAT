@@ -257,14 +257,18 @@ ion-segment-button::part(native) {
 }
 
 .auth-screen .reyom-logo {
-  width: min(180px, 58vw);
+  display: block;
+  width: min(280px, 82vw);
   height: auto;
-  aspect-ratio: 1;
+  max-height: 180px;
   object-fit: contain;
-  border-radius: 18px;
+  object-position: center;
+  border-radius: 14px;
   background: #fff;
   border: 0;
-  padding: 8px;
+  padding: 12px;
+  margin: 0 auto 18px;
+  box-sizing: border-box;
 }
 
 .auth-screen .form,
@@ -340,7 +344,9 @@ ion-segment-button::part(native) {
   }
 
   .auth-screen .reyom-logo {
-    width: min(150px, 52vw);
+    width: min(280px, 84vw);
+    max-height: 150px;
+    margin-bottom: 12px;
   }
 }
 

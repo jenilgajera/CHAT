@@ -1,4 +1,4 @@
-import { Component, OnDestroy, ViewChild, inject, signal } from '@angular/core';
+import { Component, ElementRef, OnDestroy, ViewChild, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import {
@@ -18,10 +18,11 @@ import {
   IonToolbar,
 } from '@ionic/angular';
 import { addIcons } from 'ionicons';
-import { arrowBack, attach, ellipsisVertical, happy, informationCircle, send } from 'ionicons/icons';
+import { arrowBack, attach, call, close, ellipsisVertical, happy, informationCircle, send, videocam } from 'ionicons/icons';
 import { Camera, CameraResultType, CameraSource } from '@capacitor/camera';
 import { AuthService } from '../../core/auth.service';
 import { NotifyService } from '../../core/notify.service';
+import { SocketService } from '../../core/socket.service';
 import { ChatRepo } from '../../data/chat.repo';
 import { UserRepo } from '../../data/user.repo';
 import { Chat, ChatMessage, ReplyTo, colorFromName, isUserOnline } from '../../data/models';
@@ -75,6 +76,11 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
             </div>
           </div>
           <ion-buttons slot="end">
+            @if (c.type === 'private') {
+              <ion-button (click)="startVideoCall()" aria-label="Video call">
+                <ion-icon slot="icon-only" name="videocam"></ion-icon>
+              </ion-button>
+            }
             <ion-button (click)="searching.set(!searching())" aria-label="Search">Search</ion-button>
             @if (c.type === 'group') {
               <ion-button (click)="info()" aria-label="Group info">
@@ -94,6 +100,17 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
         </ion-toolbar>
       }
     </ion-header>
+    @if (callOn()) {
+      <div class="call-panel">
+        <video #remoteVideo class="remote-video" autoplay playsinline></video>
+        <video #localVideo class="local-video" autoplay muted playsinline></video>
+        <div class="call-controls">
+          <ion-button color="danger" (click)="endVideoCall()" aria-label="End video call">
+            <ion-icon slot="icon-only" name="call"></ion-icon>
+          </ion-button>
+        </div>
+      </div>
+    }
     <ion-content #scroller class="chat-bg" [scrollEvents]="true" (ionScroll)="onScroll($event)">
       @if (loadingOlder()) {
         <div class="center"><ion-spinner name="crescent"></ion-spinner></div>
@@ -239,6 +256,36 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
         z-index: 20;
         background: #000;
       }
+      .call-panel {
+        position: fixed;
+        inset: 0;
+        z-index: 40;
+        background: #101820;
+      }
+      .remote-video {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .local-video {
+        position: absolute;
+        top: 18px;
+        right: 18px;
+        width: 112px;
+        height: 160px;
+        object-fit: cover;
+        border: 2px solid #fff;
+        border-radius: 10px;
+        background: #26343d;
+      }
+      .call-controls {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: 28px;
+        display: flex;
+        justify-content: center;
+      }
       .center {
         text-align: center;
         padding: 8px;
@@ -253,6 +300,8 @@ const REACTIONS = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
 })
 export class ChatRoomPage implements OnDestroy {
   @ViewChild('scroller') scroller?: IonContent;
+  @ViewChild('localVideo') localVideo?: ElementRef<HTMLVideoElement>;
+  @ViewChild('remoteVideo') remoteVideo?: ElementRef<HTMLVideoElement>;
 
   readonly auth = inject(AuthService);
   private readonly route = inject(ActivatedRoute);
@@ -260,6 +309,7 @@ export class ChatRoomPage implements OnDestroy {
   private readonly chats = inject(ChatRepo);
   private readonly users = inject(UserRepo);
   private readonly notify = inject(NotifyService);
+  private readonly sockets = inject(SocketService);
   private readonly sheets = inject(ActionSheetController);
 
   readonly chat = signal<Chat | null>(null);
@@ -271,6 +321,7 @@ export class ChatRoomPage implements OnDestroy {
   readonly viewer = signal<string | null>(null);
   readonly typingIds = signal<string[]>([]);
   readonly muted = signal(false);
+  readonly callOn = signal(false);
   readonly colorFromName = colorFromName;
   readonly emojis = EMOJIS;
   query = '';
@@ -284,9 +335,11 @@ export class ChatRoomPage implements OnDestroy {
   private stickToBottom = true;
   private typingTimer: ReturnType<typeof setTimeout> | null = null;
   private localPending: ChatMessage[] = [];
+  private peer: RTCPeerConnection | null = null;
+  private localStream: MediaStream | null = null;
 
   constructor() {
-    addIcons({ arrowBack, informationCircle, send, attach, happy, ellipsisVertical });
+    addIcons({ arrowBack, informationCircle, send, attach, happy, ellipsisVertical, videocam, call, close });
     this.uid = this.auth.uid();
     this.chatId = this.route.snapshot.paramMap.get('id') ?? '';
     this.notify.setOpenChat(this.chatId);
@@ -302,6 +355,7 @@ export class ChatRoomPage implements OnDestroy {
     if (this.typingTimer) {
       clearTimeout(this.typingTimer);
     }
+    this.endVideoCall(false);
   }
 
   visible(): { msg: ChatMessage; sep: string }[] {
@@ -589,11 +643,93 @@ export class ChatRoomPage implements OnDestroy {
     this.unsubs.push(
       this.chats.listenTyping(this.chatId, this.uid, (ids) => this.typingIds.set(ids)),
     );
+    this.unsubs.push(
+      this.sockets.on<{ chatId: string; from: string; kind: string; signal: RTCSessionDescriptionInit | RTCIceCandidateInit }>(
+        'call:signal',
+        (payload) => {
+          if (payload.chatId === this.chatId) void this.handleCallSignal(payload);
+        },
+      ),
+    );
     try {
       await this.chats.clearUnread(this.chatId, this.uid);
     } catch {
       // offline ok
     }
+  }
+
+  async startVideoCall(): Promise<void> {
+    try {
+      await this.openMedia();
+      this.createPeer();
+      const offer = await this.peer!.createOffer();
+      await this.peer!.setLocalDescription(offer);
+      this.sendCall('offer', offer);
+    } catch {
+      this.endVideoCall();
+      await this.notify.show('Camera and microphone permission is required for video calls.', 'danger');
+    }
+  }
+
+  private async handleCallSignal(payload: { kind: string; signal: RTCSessionDescriptionInit | RTCIceCandidateInit }): Promise<void> {
+    if (payload.kind === 'hangup') {
+      this.endVideoCall(false);
+      return;
+    }
+    try {
+      await this.openMedia();
+      this.createPeer();
+      if (payload.kind === 'offer') {
+        await this.peer!.setRemoteDescription(payload.signal as RTCSessionDescriptionInit);
+        const answer = await this.peer!.createAnswer();
+        await this.peer!.setLocalDescription(answer);
+        this.sendCall('answer', answer);
+      } else if (payload.kind === 'answer') {
+        await this.peer!.setRemoteDescription(payload.signal as RTCSessionDescriptionInit);
+      } else if (payload.kind === 'candidate') {
+        await this.peer!.addIceCandidate(payload.signal as RTCIceCandidateInit);
+      }
+    } catch {
+      this.endVideoCall();
+      await this.notify.show('Could not connect the video call.', 'danger');
+    }
+  }
+
+  private async openMedia(): Promise<void> {
+    if (!this.localStream) {
+      this.localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
+    }
+    this.callOn.set(true);
+    queueMicrotask(() => {
+      if (this.localVideo) this.localVideo.nativeElement.srcObject = this.localStream;
+    });
+  }
+
+  private createPeer(): void {
+    if (this.peer) return;
+    this.peer = new RTCPeerConnection({
+      iceServers: [{ urls: 'stun:stun.l.google.com:19302' }],
+    });
+    this.localStream?.getTracks().forEach((track) => this.peer?.addTrack(track, this.localStream!));
+    this.peer.onicecandidate = (event) => {
+      if (event.candidate) this.sendCall('candidate', event.candidate.toJSON());
+    };
+    this.peer.ontrack = (event) => {
+      if (this.remoteVideo) this.remoteVideo.nativeElement.srcObject = event.streams[0];
+    };
+  }
+
+  private sendCall(kind: string, signal: unknown): void {
+    this.sockets.emit('call:signal', { chatId: this.chatId, kind, signal });
+  }
+
+  endVideoCall(notifyPeer = true): void {
+    if (notifyPeer && this.peer) this.sendCall('hangup', null);
+    this.peer?.close();
+    this.peer = null;
+    this.localStream?.getTracks().forEach((track) => track.stop());
+    this.localStream = null;
+    this.callOn.set(false);
   }
 
   private async acknowledge(msgs: ChatMessage[]): Promise<void> {

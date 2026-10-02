@@ -55,4 +55,8 @@ export class SocketService {
       this.socket?.off(event, handler);
     };
   }
+
+  isConnected(): boolean {
+    return Boolean(this.socket?.connected);
+  }
 }

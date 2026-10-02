@@ -89,6 +89,18 @@ function attachSockets(io, jwtSecret) {
       if (!chat || !chat.members.includes(uid)) return;
       socket.to(chatRoom(String(chatId))).emit('typing', { chatId: String(chatId), uid });
     });
+
+    socket.on('call:signal', async (payload = {}) => {
+      const chatId = String(payload.chatId || '');
+      const chat = await Chat.findById(chatId);
+      if (!chat || chat.type !== 'private' || !chat.members.includes(uid)) return;
+      socket.to(chatRoom(chatId)).emit('call:signal', {
+        chatId,
+        from: uid,
+        kind: payload.kind || 'signal',
+        signal: payload.signal || null,
+      });
+    });
   });
 }
 

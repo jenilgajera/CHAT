@@ -688,7 +688,7 @@ export class ChatRoomPage implements OnDestroy {
         if (shouldScroll) {
           queueMicrotask(() => void this.scroller?.scrollToBottom(300));
         }
-      }, (error) => this.handleLoadError(error)),
+      }, (error) => this.handleLoadError(error), (message) => this.receiveMessage(message)),
     );
     this.unsubs.push(
       this.chats.listenTyping(this.chatId, this.uid, (ids) => this.typingIds.set(ids)),
@@ -730,6 +730,24 @@ export class ChatRoomPage implements OnDestroy {
           : 'Could not load this chat. Check your connection.';
     this.loadError.set(message);
     void this.notify.show(message, 'danger');
+  }
+
+  private receiveMessage(message: ChatMessage): void {
+    const current = this.messages();
+    const index = current.findIndex((item) => item.id === message.id || item.clientId === message.clientId);
+    const next = [...current];
+    if (index >= 0) {
+      next[index] = message;
+    } else {
+      next.push(message);
+    }
+    next.sort((a, b) => new Date(a.createdAt || 0).getTime() - new Date(b.createdAt || 0).getTime());
+    this.messages.set(next);
+    this.localPending = this.localPending.filter((pending) => pending.clientId !== message.clientId);
+    void this.acknowledge([message]);
+    if (this.stickToBottom) {
+      queueMicrotask(() => void this.scroller?.scrollToBottom(180));
+    }
   }
 
   async startVideoCall(): Promise<void> {

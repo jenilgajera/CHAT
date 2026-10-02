@@ -30,6 +30,7 @@ export class ChatRepo {
     chatId: string,
     cb: (messages: ChatMessage[], oldestId: string | null) => void,
     onError?: (error: unknown) => void,
+    onMessage?: (message: ChatMessage) => void,
   ): () => void {
     const load = async () => {
       const data = await this.api.get<{ messages: ChatMessage[]; oldestId: string | null }>(
@@ -41,7 +42,7 @@ export class ChatRepo {
     this.sockets.emit('join:chat', chatId);
     const offNew = this.sockets.on<{ chatId: string; message: ChatMessage }>('message:new', (payload) => {
       if (payload.chatId === chatId) {
-        void load().catch((error: unknown) => onError?.(error));
+        onMessage?.(payload.message);
       }
     });
     return () => {

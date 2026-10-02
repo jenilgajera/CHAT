@@ -281,6 +281,7 @@ export class ChatRoomPage implements OnDestroy {
   private unsubs: Array<() => void> = [];
   private oldest: string | null = null;
   private hasMore = true;
+  private stickToBottom = true;
   private typingTimer: ReturnType<typeof setTimeout> | null = null;
   private localPending: ChatMessage[] = [];
 
@@ -542,7 +543,9 @@ export class ChatRoomPage implements OnDestroy {
   }
 
   async onScroll(ev: CustomEvent): Promise<void> {
-    const top = (ev.detail as { scrollTop: number }).scrollTop;
+    const detail = ev.detail as { scrollTop: number; scrollHeight: number; clientHeight: number };
+    const top = detail.scrollTop;
+    this.stickToBottom = detail.scrollHeight - (top + detail.clientHeight) < 120;
     if (top < 80 && this.hasMore && !this.loadingOlder() && this.oldest) {
       this.loadingOlder.set(true);
       try {
@@ -569,6 +572,7 @@ export class ChatRoomPage implements OnDestroy {
     );
     this.unsubs.push(
       this.chats.listenLatestMessages(this.chatId, (msgs, oldestId) => {
+        const shouldScroll = this.stickToBottom;
         const liveIds = new Set(msgs.map((m) => m.id));
         const older = this.messages().filter((m) => !liveIds.has(m.id) && !m.pending);
         this.messages.set([...older, ...msgs]);
@@ -577,7 +581,9 @@ export class ChatRoomPage implements OnDestroy {
         }
         this.localPending = this.localPending.filter((p) => !msgs.some((m) => m.clientId === p.clientId));
         void this.acknowledge(msgs);
-        queueMicrotask(() => void this.scroller?.scrollToBottom(300));
+        if (shouldScroll) {
+          queueMicrotask(() => void this.scroller?.scrollToBottom(300));
+        }
       }),
     );
     this.unsubs.push(

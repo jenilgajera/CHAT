@@ -32,7 +32,7 @@ export class PushService {
     }
     await PushNotifications.createChannel({
       id: 'friends-chat-messages',
-      name: 'REYOM WH messages',
+      name: 'REYOM GROUP messages',
       description: 'New private and group chat messages',
       importance: 5,
       visibility: 1,
